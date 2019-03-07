@@ -25,6 +25,7 @@ class TeacherController extends Controller
                     [
                         'actions' => ['index', 'create', 'update', 'delete'],
                         'allow' => true,
+                        'roles' => ['@'],
                     ],
                 ],
             ],

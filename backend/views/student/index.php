@@ -8,11 +8,8 @@ use common\models\Student;
 $this->title = 'Students';
 $this->params['breadcrumbs'][] = $this->title;
 
-?>
-
-<h1>Students list</h1>
-
-<?= Html::a('Create new student', ['/student/create'], ['class' => 'btn btn-primary']);
+echo Html::tag('h1', 'Students list');
+echo Html::a('Create new student', ['/student/create'], ['class' => 'btn btn-primary', 'style' => ['margin-right' => '10px']]);
 
 $dataProvider = new ActiveDataProvider([
     'query' => Student::find(),

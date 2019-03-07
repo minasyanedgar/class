@@ -25,15 +25,4 @@ class Person extends AR
     public function getFullName() {
         return $this->first_name . ' ' . $this->last_name;
     }
-
-    public static function getAll() {
-        $data = self::find()->all();
-
-        $array = [];
-        foreach ($data as $one) {
-            $array[$one->id] = $one->getFullName();
-        }
-
-        return $array;
-    }
 }

@@ -3,7 +3,10 @@ namespace backend\controllers;
 
 use common\models\Course;
 use common\models\Schedule;
+use common\models\Student;
+use common\models\StudentCourse;
 use Yii;
+use yii\helpers\VarDumper;
 use yii\web\Controller;
 use yii\filters\AccessControl;
 use yii\web\NotFoundHttpException;
@@ -25,8 +28,13 @@ class CourseController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['index', 'create', 'update', 'delete'],
+                        'actions' => ['list', 'item'],
+                        'allow' => true
+                    ],
+                    [
+                        'actions' => ['index', 'create', 'update', 'delete', 'assign'],
                         'allow' => true,
+                        'roles' => ['@'],
                     ],
                 ],
             ],
@@ -54,21 +62,8 @@ class CourseController extends Controller
         $model = new $modelName;
         $schedule = new Schedule;
 
-        if (Yii::$app->request->isPost) {
-            $post = Yii::$app->request->post();
-
-            if ($model->load($post) && $schedule->load($post)) {
-                if ($model->validate() && $schedule->validate()) {
-                    $schedule->save(false);
-
-                    $model->schedule_id = $schedule->id;
-                    $model->save(false);
-                    return $this->redirect(['index']);
-                }
-            }
-        } else {
-            $model->populateRelation('schedule', new Schedule);
-        }
+        $model->populateRelation('schedule', new Schedule);
+        $this->_save($model, $schedule);
 
         return $this->render('create', compact('model'));
     }
@@ -87,24 +82,13 @@ class CourseController extends Controller
             throw new NotFoundHttpException("The course was not found.");
         }
 
-        if (Yii::$app->request->isPost) {
-            $post = Yii::$app->request->post();
-
-            if ($model->load($post) && $model->schedule->load($post)) {
-                if ($model->validate() && $model->schedule->validate()) {
-                    $model->schedule->save(false);
-                    $model->save(false);
-
-                    return $this->redirect(['index']);
-                }
-            }
-        }
+        $this->_save($model, $model->schedule);
 
         return $this->render('update', compact('model'));
     }
 
     // Saving process
-    private function _save($model, $schedule = false) {
+    private function _save($model, $schedule) {
         if (Yii::$app->request->isPost) {
             $post = Yii::$app->request->post();
 
@@ -117,8 +101,6 @@ class CourseController extends Controller
                     return $this->redirect(['index']);
                 }
             }
-        } else {
-            $model->populateRelation('schedule', new Schedule);
         }
     }
 
@@ -139,5 +121,45 @@ class CourseController extends Controller
         $model->delete();
 
         return $this->render('index', compact('model'));
+    }
+
+    /**
+     * Assign course to student
+     *
+     * @param bool $studentId
+     * @param bool $courseId
+     */
+    public function actionAssign($studentId = false, $courseId = false) {
+        $model = new StudentCourse;
+        if (Yii::$app->request->isPost) {
+            if ($model->load(Yii::$app->request->post())) {
+                if ($model->validate()) {
+                    $model->save(false);
+                    return $this->redirect(['/']);
+                }
+            }
+        }
+
+        return $this->render('assign', compact('model'));
+    }
+
+    /**
+     * Show courses
+     */
+    public function actionList() {
+        return $this->render('list');
+    }
+    /**
+     * Show courses item
+     */
+    public function actionItem($id) {
+        $modelName = self::$model;
+        $model = $modelName::findOne($id);
+
+        if (!$model) {
+            throw new NotFoundHttpException("The course was not found.");
+        }
+
+        return $this->render('item', compact('model'));
     }
 }

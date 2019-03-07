@@ -24,9 +24,6 @@ $form = ActiveForm::begin([
     <hr>
     <div class="form-group row">
         <?php
-
-//        \yii\helpers\VarDumper::dump($model->schedule->day_2_end);
-//        exit;
         for ($i = 1; $i <= 5; $i++) {
             echo Html::label(jddayofweek($i - 1, 1), '', ['class' => 'col-md-12']);
             foreach (['start', 'end'] as $pos) {

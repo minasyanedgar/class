@@ -14,4 +14,9 @@ class Student extends Person
     {
         return '{{%student}}';
     }
+
+    public function getCourses() {
+        return $this->hasMany(Course::className(), ['id' => 'course_id'])
+            ->viaTable('student_course', ['student_id' => 'id']);
+    }
 }

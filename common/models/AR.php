@@ -25,4 +25,15 @@ class AR extends ActiveRecord
     {
         parent::__construct($config);
     }
+
+    public static function getAll() {
+        $data = self::find()->all();
+
+        $array = [];
+        foreach ($data as $one) {
+            $array[$one->id] = $one->getFullName();
+        }
+
+        return $array;
+    }
 }

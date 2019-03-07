@@ -27,4 +27,18 @@ class Course extends AR
     {
         return $this->hasOne(Schedule::className(), ['id' => 'schedule_id']);
     }
+
+    public function getTeacher()
+    {
+        return $this->hasOne(Teacher::className(), ['id' => 'teacher_id']);
+    }
+
+    public function getStudents() {
+        return $this->hasMany(Student::className(), ['id' => 'student_id'])
+            ->viaTable('student_course', ['course_id' => 'id']);
+    }
+
+    public function getFullName() {
+        return $this->name;
+    }
 }

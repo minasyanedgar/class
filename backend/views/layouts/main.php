@@ -35,14 +35,20 @@ AppAsset::register($this);
             'class' => 'navbar-inverse navbar-fixed-top',
         ],
     ]);
-    $menuItems = [
-        ['label' => 'Courses', 'url' => ['/course/index']],
-        ['label' => 'Students', 'url' => ['/student/index']],
-        ['label' => 'Teachers', 'url' => ['/teacher/index']],
-    ];
+
     if (Yii::$app->user->isGuest) {
-        $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];
+        $menuItems = [
+            ['label' => 'Courses List', 'url' => ['/course/list']],
+            ['label' => 'Login', 'url' => ['/site/login']],
+        ];
     } else {
+        $menuItems = [
+            ['label' => 'Courses', 'url' => ['/course/index']],
+            ['label' => 'Students', 'url' => ['/student/index']],
+            ['label' => 'Assign', 'url' => ['/course/assign']],
+            ['label' => 'Teachers', 'url' => ['/teacher/index']]
+        ];
+
         $menuItems[] = '<li>'
             . Html::beginForm(['/site/logout'], 'post')
             . Html::submitButton(
